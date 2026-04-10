@@ -1,0 +1,30 @@
+# py_write_extra.rules
+# Technology: python | Capability: write
+
+rule py-warn-unsafe-yaml-load {
+  enabled true
+  priority 90
+  severity error
+  DENY write
+  IF path GLOB "**/*.py" AND content LINE_REGEX "\\byaml\\.load\\(" AND content NOT CONTAINS "SafeLoader"
+  MESSAGE "Using yaml.load() without SafeLoader allows arbitrary code execution via object instantiation. Use yaml.safe_load() instead."
+}
+
+rule py-warn-pickle-load {
+  enabled true
+  priority 95
+  severity error
+  DENY write
+  IF path GLOB "**/*.py" AND content LINE_REGEX "\\bpickle\\.load\\(|\\bpickle\\.loads\\("
+  MESSAGE "The pickle module is not secure. Unpickling data from untrusted sources can execute arbitrary code. Use safer formats like JSON or explicitly validate the source."
+}
+
+rule py-warn-assert-validation {
+  enabled true
+  priority 80
+  severity warning
+  ASK write
+  IF path GLOB "**/*.py" AND content LINE_REGEX "^\\s*assert\\s+"
+  MESSAGE "Assert statements are removed when Python is run with optimizations (-O flag). Do not use 'assert' for data validation or security checks. Use explicit 'if' statements and raise exceptions."
+  PROMPT "Are you sure this assert is only for internal debugging and not for validating user input or security conditions?"
+}
