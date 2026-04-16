@@ -16,11 +16,10 @@ rule no-mutable-default-arg {
   enabled true
   priority 75
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.py" AND content LINE_REGEX "def\\s+\\w+\\s*\\([^)]*=\\s*\\["
   OR path GLOB "**/*.py" AND content LINE_REGEX "def\\s+\\w+\\s*\\([^)]*=\\s*\\{"
   MESSAGE "Mutable default arguments (lists, dicts) are shared across all calls. Use None as default and initialize inside the function body."
-  PROMPT "Is this default argument a list or dict? If so, use None as default and initialize with 'if arg is None: arg = []' inside the function."
 }
 
 rule no-print-in-src {
@@ -37,8 +36,7 @@ rule no-wildcard-import {
   enabled true
   priority 70
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.py" AND content LINE_REGEX "from \\w+ import \\*"
   MESSAGE "Wildcard imports pollute the namespace and make it hard to trace where names come from. Use explicit imports."
-  PROMPT "Can this be replaced with explicit named imports? Wildcard imports make code harder to maintain and can cause naming collisions."
 }

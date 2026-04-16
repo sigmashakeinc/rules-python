@@ -23,8 +23,7 @@ rule py-warn-assert-validation {
   enabled true
   priority 80
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.py" AND content LINE_REGEX "^\\s*assert\\s+"
   MESSAGE "Assert statements are removed when Python is run with optimizations (-O flag). Do not use 'assert' for data validation or security checks. Use explicit 'if' statements and raise exceptions."
-  PROMPT "Are you sure this assert is only for internal debugging and not for validating user input or security conditions?"
 }

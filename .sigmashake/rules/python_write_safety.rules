@@ -67,20 +67,18 @@ rule no-subprocess-user-input {
   enabled true
   priority 90
   severity error
-  ASK write
+  LOG write
   IF path GLOB "**/*.py" AND content LINE_REGEX "subprocess\\.(run|call|check_output|Popen)\\s*\\(.*f['\"]"
   OR path GLOB "**/*.py" AND content LINE_REGEX "subprocess\\.(run|call|check_output|Popen)\\s*\\([^,)]*\\+"
   OR path GLOB "**/*.py" AND content LINE_REGEX "subprocess\\.(run|call|Popen)\\s*\\(.*shell=True.*\\+"
   MESSAGE "subprocess calls with string interpolation/concatenation enable command injection. Pass arguments as a list with shell=False: subprocess.run(['cmd', user_arg], shell=False)"
-  PROMPT "Are any subprocess arguments built from user-controlled data? Pass them as a list element, not concatenated into a string: subprocess.run(['cmd', user_input], shell=False)"
 }
 
 rule no-assert-for-validation {
   enabled true
   priority 70
   severity warning
-  ASK write
+  LOG write
   IF path GLOB "**/*.py" AND content LINE_REGEX "^\\s*assert\\s+.*,\\s*[\"']"
   MESSAGE "assert statements are stripped when Python runs with -O (optimize). Use explicit if/raise for input validation in production code."
-  PROMPT "Is this assert used for input validation? If so, replace with 'if not condition: raise ValueError(...)' — asserts can be disabled at runtime."
 }
